@@ -85,15 +85,36 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
 }
 
 void terminal_putchar(char c) {
-  terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+
+if (c != '\n'){
+	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+		
+}
+else {
+	terminal_row++;
+	terminal_column = -1;
+
+}
+if (terminal_row == VGA_HEIGHT){
+
+	for(size_t x = 0; x < VGA_WIDTH; x++){
+		for(size_t y = 0; y < VGA_HEIGHT; y++){
+			const size_t index = y * VGA_WIDTH + x;
+			terminal_buffer[index] = terminal_buffer[(y+1) * VGA_WIDTH + x];
+		}
+	}
+	terminal_row = VGA_HEIGHT -1;
+}
+  
   if (++terminal_column == VGA_WIDTH) {
-    terminal_column = 0;
+    terminal_column = 0 ;
     if (++terminal_row == VGA_HEIGHT) {
       terminal_row = 0;
-    }
-  }
+
+		}
+	}
 }
- 
+
 void terminal_writestring(const char* data) {
   size_t datalen = strlen(data);
   for (size_t i = 0; i < datalen; i++)
@@ -111,5 +132,16 @@ void kernel_main() {
    * yet, '\n' will produce some VGA specific character instead.
    * This is normal.
    */
-  terminal_writestring("Hello, kernel World!\n");
+for (size_t t = 0; t < 9; t++){
+	terminal_setcolor(COLOR_GREEN);	
+	terminal_writestring("Hello, kernel World!\n");
+}
+for (size_t t = 0; t < 15; t++){
+	terminal_setcolor(COLOR_WHITE);	
+	terminal_writestring("Hello, kernel World!\n");
+}
+for (size_t t = 0; t < 8; t++){
+	terminal_setcolor(COLOR_GREEN);	
+	terminal_writestring("Hello, kernel World!\n");
+}
 }
